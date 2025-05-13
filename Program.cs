@@ -1,3 +1,5 @@
+using Test1.Dependencies;
+
 namespace Test1
 {
     public class Program
@@ -13,7 +15,8 @@ namespace Test1
             builder.Services
                 .AddEndpointsApiExplorer()
                 .AddSwaggerGen()
-                .AddProblemDetails();
+                .AddProblemDetails()
+                .AddDependencies();
 
             var app = builder.Build();
 

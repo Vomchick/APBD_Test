@@ -12,15 +12,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Contracts\Responses\" />
-    <Folder Include="Contracts\Requests\" />
-    <Folder Include="Controllers\" />
+    <Folder Include="Middleware\" />
     <Folder Include="Infrastructure\" />
-    <Folder Include="Dependencies\" />
-    <Folder Include="Entities\" />
-    <Folder Include="Exceptions\" />
     <Folder Include="Mappers\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>
