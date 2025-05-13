@@ -109,33 +109,33 @@ namespace Test1.Services
             return response;
         }
 
-        public async Task<TaskAddedResponse> AddTaskAsync(TaskRequest Task, CancellationToken token)
+        public async Task<TaskAddedResponse> AddTaskAsync(TaskRequest Task)
         {
             using var connection = new SqlConnection(_connectionString);
             await connection.OpenAsync();
 
-            var checkClient = new SqlCommand("SELECT COUNT(*) FROM Project WHERE IdProject = @id", connection, transaction);
+            var checkClient = new SqlCommand("SELECT COUNT(*) FROM Project WHERE IdProject = @id", connection);
             checkClient.Parameters.AddWithValue("@id", Task.IdProject);
             if ((int)await checkClient.ExecuteScalarAsync() == 0)
                 throw new ProjectNotFoundException("Project not found");
 
-            var checkTaskType = new SqlCommand("SELECT COUNT(*) FROM TaskType WHERE IdTaskType = @id", connection, transaction);
+            var checkTaskType = new SqlCommand("SELECT COUNT(*) FROM TaskType WHERE IdTaskType = @id", connection);
             checkTaskType.Parameters.AddWithValue("@id", Task.IdTaskType);
             if ((int)await checkTaskType.ExecuteScalarAsync() == 0)
                 throw new TaskTypeNotFoundException("Task type not found");
 
-            var checkAssigned = new SqlCommand("SELECT COUNT(*) FROM TeamMember WHERE IdTeamMember = @id", connection, transaction);
+            var checkAssigned = new SqlCommand("SELECT COUNT(*) FROM TeamMember WHERE IdTeamMember = @id", connection);
             checkAssigned.Parameters.AddWithValue("@id", Task.IdAssignedTo);
             if ((int)await checkAssigned.ExecuteScalarAsync() == 0)
                 throw new TeamMemberNotFound("Asigned team member not found");
 
-            var checkCreator = new SqlCommand("SELECT COUNT(*) FROM TeamMember WHERE IdTeamMember = @id", connection, transaction);
+            var checkCreator = new SqlCommand("SELECT COUNT(*) FROM TeamMember WHERE IdTeamMember = @id", connection);
             checkCreator.Parameters.AddWithValue("@id", Task.IdCreator);
             if ((int)await checkCreator.ExecuteScalarAsync() == 0)
                 throw new TeamMemberNotFound("Creator not found");
 
 
-            var insertTask = new SqlCommand("INSERT [dbo].[Task] ([Name], [Description], [Deadline], [IdProject], [IdTaskType], [IdAssignedTo], [IdCreator]) VALUES (@name, @description, @deadline, @projectId, @taskType, @assignedId, @creatorId) SELECT SCOPE_IDENTITY();", connection, transaction);
+            var insertTask = new SqlCommand("INSERT [dbo].[Task] ([Name], [Description], [Deadline], [IdProject], [IdTaskType], [IdAssignedTo], [IdCreator]) VALUES (@name, @description, @deadline, @projectId, @taskType, @assignedId, @creatorId) SELECT SCOPE_IDENTITY();", connection);
             insertTask.Parameters.AddWithValue("@name", Task.Name);
             insertTask.Parameters.AddWithValue("@description", Task.Description);
             insertTask.Parameters.AddWithValue("@deadline", Task.Deadline);
@@ -143,7 +143,7 @@ namespace Test1.Services
             insertTask.Parameters.AddWithValue("@taskType", Task.IdTaskType);
             insertTask.Parameters.AddWithValue("@assignedId", Task.IdAssignedTo);
             insertTask.Parameters.AddWithValue("@creatorId", Task.IdCreator);
-            var result = await insertTask.ExecuteScalarAsync(token);
+            var result = await insertTask.ExecuteScalarAsync();
 
             return new TaskAddedResponse { Id = Convert.ToInt32(result) };
         }
